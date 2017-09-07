@@ -1,7 +1,7 @@
 # Wit.ai Bot Framework Integration
 
 ## Overview
-This is an integration between Wit.ai and Microsoft Bot Framework. Wit.ai allows users to create full fledged dialogs that can contain placeholders for actions, with expected inputs and outputs. This integration will facilitate the implementation of the actions, and automatically paseses the message responses, leveraging the Wit.ai context variables, from Wit.ai bot engine directly to the user.
+This is an integration between Wit.ai and Microsoft Bot Framework. Wit.ai allows users to create full fledged dialogs that can contain placeholders for actions, with expected inputs and outputs. This integration will facilitate the implementation of the actions, and automatically passes the message responses, leveraging the Wit.ai context variables, from Wit.ai bot engine directly to the user.
 
 ## Getting Started
 
