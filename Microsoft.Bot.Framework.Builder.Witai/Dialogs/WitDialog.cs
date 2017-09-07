@@ -1,37 +1,16 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Internals.Fibers;
-using Microsoft.Bot.Builder.Scorables.Internals;
 using Microsoft.Bot.Connector;
+using Microsoft.Bot.Framework.Builder.Exceptions;
 using Microsoft.Bot.Framework.Builder.Witai.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Bot.Framework.Builder.Exceptions;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    [Serializable]
-    public class WitActionAttribute : AttributeString
-    {
-        public readonly string ActionName;
-
-        public WitActionAttribute(string actionName)
-        {
-            SetField.NotNull(out this.ActionName, nameof(actionName), actionName);
-        }
-
-        protected override string Text
-        {
-            get
-            {
-                return this.ActionName;
-            }
-        }
-    }
-
     public delegate Task ActionHandler(IDialogContext context, WitResult witResult);
 
     public delegate Task ActionActivityHandler(IDialogContext context, IAwaitable<IMessageActivity> message, WitResult witResult);
@@ -145,8 +124,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                 this.handlerByAction = new Dictionary<string, ActionActivityHandler>(GetHandlersByAction());
             }
 
-            ActionActivityHandler handler = null;
-            if (string.IsNullOrEmpty(result.Action) || !this.handlerByAction.TryGetValue(result.Action, out handler))
+            if (string.IsNullOrEmpty(result.Action) || !this.handlerByAction.TryGetValue(result.Action, out ActionActivityHandler handler))
             {
                 handler = this.handlerByAction[string.Empty];
             }

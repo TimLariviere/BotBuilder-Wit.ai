@@ -45,7 +45,8 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
             await context.PostAsync(witResult.Action);
         }
 
-        public async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
+        // Hides the original MessageReceived because we want to expose a public version of it
+        public new async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
         {
             await base.MessageReceived(context, item);
         }

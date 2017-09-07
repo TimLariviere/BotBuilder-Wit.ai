@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\WitActionAttribute.cs" />
     <Compile Include="WitErrorException.cs" />
     <Compile Include="Exceptions\ActionHandlerNotFoundException.cs" />
     <Compile Include="Exceptions\InvalidActionHandlerException.cs" />
