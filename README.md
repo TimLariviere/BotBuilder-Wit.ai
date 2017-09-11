@@ -11,11 +11,11 @@ This is an integration between Wit.ai and Microsoft Bot Framework. Wit.ai allows
 ```csharp
 [WitModel("Access Token")]
 ```
-* To define action handlers for the actions defined in your Wit.ai application, decorate the handler methods like below:
+* To define intent handlers for the actions defined in your Wit.ai application, decorate the handler methods like below:
 ```csharp
-[WitAction("Action Name")]
+[WitIntent("Intent Name")]
 ```
-where the action name is how you defined it in your application.
+where the intent name is how you defined it in your application.
 
 ## Use Case and Features
 This is useful when you want to create a bot using wit.ai for language understanding and conversation flow. Microsoft Bot Framework is useful for making it easy to publish on several channels and having a good code structure. It's a great place to implement your action and update the wit context variables as well.
@@ -34,20 +34,20 @@ We can see here that "getMyForecast" action needs to be executed. It is expected
 public class WeatherDialog : WitDialog
 ```
 
-First, we added the Server Access Token. Now, we need to implement the "getMyForcast" action, which happens here:
+First, we added the Server Access Token. Now, we need to implement the "getMyForecast" action, which happens here:
 
 ```csharp
-        [WitAction("getMyForecast")]
+        [WitIntent("getMyForecast")]
         public async Task GetForecast(IDialogContext context, WitResult result)
         {
             //adding location to context
-            this.WitContext["location"] =  result.Entities["location"][0].Value;
+            Context["location"] =  result.Entities["location"][0].Value;
 
             //yahoo weather API
-            var temp = await GetWeather(this.WitContext["location"]);
+            var temp = await GetWeather(Context["location"]);
 
             //adding temp to context
-            this.WitContext["forecast"] =  temp;
+            Context["forecast"] =  temp;
         }
 ```
 

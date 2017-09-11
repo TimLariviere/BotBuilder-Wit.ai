@@ -12,7 +12,6 @@ namespace Microsoft.Bot.Framework.Builder
     [Serializable]
     public class WitContext : IWitContext
     {
-        
         private ConcurrentDictionary<string, object> dictionary;
         
         /// <summary>
@@ -24,9 +23,7 @@ namespace Microsoft.Bot.Framework.Builder
         {
             get
             {
-                object value;
-
-                if(this.TryGetValue(key, out value))
+                if (TryGetValue(key, out var value))
                 {
                     return value;
                 }
@@ -37,7 +34,7 @@ namespace Microsoft.Bot.Framework.Builder
             }
             set
             {
-                this.AddOrUpdate(key, value);
+                AddOrUpdate(key, value);
             }
         }
 
@@ -47,7 +44,7 @@ namespace Microsoft.Bot.Framework.Builder
         /// </summary>
         public WitContext()
         {
-            this.dictionary = new ConcurrentDictionary<string, object>();
+            dictionary = new ConcurrentDictionary<string, object>();
         }
 
         /// <summary>
@@ -87,7 +84,7 @@ namespace Microsoft.Bot.Framework.Builder
         /// <returns>the json string representation of this object</returns>
         public string ToJsonString()
         {
-            return new JavaScriptSerializer().Serialize(this.dictionary);
+            return new JavaScriptSerializer().Serialize(dictionary);
         }
 
         /// <summary>
@@ -97,8 +94,7 @@ namespace Microsoft.Bot.Framework.Builder
         /// <returns>true if the object was removed; otherwise, false.</returns>
         public bool RemoveIfExists(string key)
         {
-            object value;
-            return this.dictionary.TryRemove(key.ToLower(), out value);
+            return dictionary.TryRemove(key.ToLower(), out var value);
         }
     }
 }

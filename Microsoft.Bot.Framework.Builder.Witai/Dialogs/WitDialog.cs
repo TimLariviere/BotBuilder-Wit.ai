@@ -1,13 +1,14 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Internals.Fibers;
-using Microsoft.Bot.Connector;
-using Microsoft.Bot.Framework.Builder.Exceptions;
-using Microsoft.Bot.Framework.Builder.Witai.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Internals.Fibers;
+using Microsoft.Bot.Connector;
+using Microsoft.Bot.Framework.Builder.Exceptions;
+using Microsoft.Bot.Framework.Builder.Witai.Extensions;
+using Microsoft.Bot.Framework.Builder.Witai.Models;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 {
@@ -18,69 +19,66 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
     [Serializable]
     public class WitDialog<TResult> : IDialog<TResult>
     {
-        protected readonly IWitService service;
-       
+        #region Fields
+
         [NonSerialized]
-        protected Dictionary<string, IntentActivityHandler> handlerByIntent;
-        protected IWitContext WitContext;
-        private string WitThreadId;
+        private Dictionary<string, IntentActivityHandler> _handlerByIntent;
+        private readonly IWitService _service;
+        private string _witThreadId;
 
-        public IWitService MakeServiceFromAttributes()
-        {
-            var type = this.GetType();
-            var witModels = type.GetCustomAttributes<WitModelAttribute>(inherit: true);
-            if (witModels.ToArray().Length > 1)
-            {
-                throw new WitModelDisambiguationException("WitDialog does not support more than one WitModel per instance");
-            }
+        #endregion
 
-            return new WitService(witModels.ToArray()[0]);
-        }
+        #region Constructor
 
         public WitDialog()
         {
-            SetField.NotNull(out this.service, nameof(service), this.MakeServiceFromAttributes());
-            this.StartNewThread();
+            SetField.NotNull(out _service, nameof(_service), MakeServiceFromAttributes());
+            StartNewThread();
         }
 
         public WitDialog(IWitService service)
         {
-            SetField.NotNull(out this.service, nameof(service), service);
-            this.StartNewThread();
+            SetField.NotNull(out _service, nameof(service), service);
+            StartNewThread();
         }
 
-        protected void StartNewThread()
-        {
-            this.WitContext = new WitContext();
-            this.WitThreadId = Guid.NewGuid().ToString();
-        }
+        #endregion
+
+        #region Properties
+
+        protected IWitService Service => _service;
+        protected IWitContext Context { get; set; }
+
+        #endregion
+
+        #region Public methods
 
         public virtual Task StartAsync(IDialogContext context)
-        {            
+        {
             context.Wait(MessageReceived);
             return Task.CompletedTask;
         }
-        
+
+        #endregion
+
+        #region Protected methods
+
+        protected void StartNewThread()
+        {
+            Context = new WitContext();
+            _witThreadId = Guid.NewGuid().ToString();
+        }
+
         protected virtual async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
         {
             await MessageHandler(context, item);
         }
 
-        private async Task MessageHandler(IDialogContext context, IAwaitable<IMessageActivity> item)
-        {
-            var message = await item;
-            var messageText = await GetWitQueryTextAsync(context, message);
-            string jsonContext = this.WitContext.ToJsonString();
-            var result = await this.service.QueryAsync(messageText, this.WitThreadId, jsonContext, context.CancellationToken);
-                
-            await DispatchToIntentHandler(context, item, result);
-        }
-
         protected virtual async Task DispatchToIntentHandler(IDialogContext context, IAwaitable<IMessageActivity> item, WitResult result)
         {
-            if (this.handlerByIntent == null)
+            if (_handlerByIntent == null)
             {
-                this.handlerByIntent = new Dictionary<string, IntentActivityHandler>(GetHandlersByIntent());
+                _handlerByIntent = new Dictionary<string, IntentActivityHandler>(GetHandlersByIntent());
             }
 
             var intent = result.Entities.FirstOrDefault(e => e.Key == "intent").Value?
@@ -88,9 +86,9 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                                .Select(i => i.Value)
                                .FirstOrDefault();
 
-            if (string.IsNullOrEmpty(result.Text) || string.IsNullOrEmpty(intent) || !this.handlerByIntent.TryGetValue(intent, out IntentActivityHandler handler))
+            if (string.IsNullOrEmpty(result.Text) || string.IsNullOrEmpty(intent) || !_handlerByIntent.TryGetValue(intent, out IntentActivityHandler handler))
             {
-                handler = this.handlerByIntent[string.Empty];
+                handler = _handlerByIntent[string.Empty];
             }
 
             if (handler != null)
@@ -99,7 +97,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
             }
             else
             {
-                throw new ActionHandlerNotFoundException("No default intent handler found.");
+                throw new IntentHandlerNotFoundException("No default intent handler found.");
             }
         }
 
@@ -112,6 +110,34 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
         {
             return Task.FromResult(message.Text);
         }
+
+        #endregion
+
+        #region Private methods
+
+        private async Task MessageHandler(IDialogContext context, IAwaitable<IMessageActivity> item)
+        {
+            var message = await item;
+            var messageText = await GetWitQueryTextAsync(context, message);
+            var jsonContext = Context.ToJsonString();
+            var result = await _service.QueryAsync(messageText, _witThreadId, jsonContext, context.CancellationToken);
+
+            await DispatchToIntentHandler(context, item, result);
+        }
+
+        private IWitService MakeServiceFromAttributes()
+        {
+            var type = GetType();
+            var witModels = type.GetCustomAttributes<WitModelAttribute>(inherit: true);
+            if (witModels.ToArray().Length > 1)
+            {
+                throw new WitModelDisambiguationException("WitDialog does not support more than one WitModel per instance");
+            }
+
+            return new WitService(witModels.ToArray()[0]);
+        }
+
+        #endregion
     }
 
     internal static class WitDialog
@@ -171,7 +197,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                 {
                     if (actions.Length > 0)
                     {
-                        throw new InvalidActionHandlerException(string.Join(";", actions.Select(i => i.IntentName)), method);
+                        throw new InvalidIntentHandlerException(string.Join(";", actions.Select(i => i.IntentName)), method);
                     }
                 }
             }

@@ -6,9 +6,9 @@ namespace Microsoft.Bot.Framework.Builder.Exceptions
     /// Exception type thrown when an ActionHandler is not found
     /// </summary>
     [Serializable]
-    internal class ActionHandlerNotFoundException : Exception
+    internal class IntentHandlerNotFoundException : Exception
     {
-        public ActionHandlerNotFoundException(string message) : base(message)
+        public IntentHandlerNotFoundException(string message) : base(message)
         {
         }
     }

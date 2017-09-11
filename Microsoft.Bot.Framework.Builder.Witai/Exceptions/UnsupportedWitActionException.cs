@@ -6,9 +6,9 @@ namespace Microsoft.Bot.Framework.Builder.Exceptions
     /// Exception type thrown when an unsupported action is received from Wit Api
     /// </summary>
     [Serializable]
-    internal class UnsupportedWitActionException : Exception
+    internal class UnsupportedWitIntentException : Exception
     {
-        public UnsupportedWitActionException(string message) : base(message)
+        public UnsupportedWitIntentException(string message) : base(message)
         {
         }
     }

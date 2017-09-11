@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
@@ -13,22 +12,18 @@ namespace Microsoft.Bot.Framework.Builder.Witai
     /// </summary>
     public sealed class WitRequest : IWitRequest
     {
-        public string Query { get; }
+        private string _threadId;
 
-        public string ThreadId => threadId;
-
-        private string threadId;
-
-        public string Context => context;
-
-        private string context;
-
-        public WitRequest(string query, string threadId, string context = "{}")
+        public WitRequest(string query, string threadId, string context = null)
         {
-            this.Query = query;
-            SetField.NotNull(out this.threadId, nameof(threadId), threadId);
-            SetField.NotNull(out this.context, nameof(context), context);
+            Query = query;
+            Context = context;
+            SetField.NotNull(out _threadId, nameof(threadId), threadId);
         }
+
+        public string Query { get; }
+        public string Context { get; }
+        public string ThreadId => _threadId;
 
         /// <summary>
         /// Build the Uri for issuing the request for the specified wit model.
@@ -44,13 +39,12 @@ namespace Microsoft.Bot.Framework.Builder.Witai
 
             var request = new HttpRequestMessage()
             {
-                RequestUri = this.BuildUri(model),
-                Method = HttpMethod.Post,
+                RequestUri = BuildUri(model),
+                Method = HttpMethod.Get,
             };
 
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", model.AuthToken);
-            request.Content = new StringContent(this.Context, Encoding.UTF8, "application/json");
 
             return request;
         }
@@ -63,18 +57,27 @@ namespace Microsoft.Bot.Framework.Builder.Witai
                 throw new ValidationException(ValidationRules.CannotBeNull, "thread id");
             }
 
-            var queryParameters = new List<string>();
-            queryParameters.Add($"thread_id={Uri.EscapeDataString(ThreadId)}");
+            var queryParameters = new List<string>
+            {
+                $"thread_id={Uri.EscapeDataString(ThreadId)}"
+            };
 
             if (!string.IsNullOrEmpty(Query))
             {
                 queryParameters.Add($"q={Uri.EscapeDataString(Query)}");
             }
 
+            if (!string.IsNullOrEmpty(Context))
+            {
+                queryParameters.Add($"context={Uri.EscapeDataString(Context)}");
+            }
+
             var builder = new UriBuilder(model.UriBase)
             {
                 Query = string.Join("&", queryParameters)
             };
+
+
             return builder.Uri;
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
+namespace Microsoft.Bot.Framework.Builder.Witai.Exceptions
 {
     [Serializable]
     internal class WitErrorException : Exception

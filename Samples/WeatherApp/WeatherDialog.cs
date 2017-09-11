@@ -17,13 +17,13 @@ namespace WitWeather
         public async Task GetForecast(IDialogContext context, WitResult result)
         {
             //adding location to context
-            this.WitContext["location"] =  result.Entities["location"][0].Value;
+            Context["location"] = result.Entities["location"][0].Value;
 
             //yahoo weather API
-            var temp = await GetWeather(this.WitContext["location"]);
+            var temp = await GetWeather(Context["location"]);
 
             //adding temp to context
-            this.WitContext["forecast"] =  temp;
+            Context["forecast"] = temp;
         }
 
         private async Task<int> GetWeather(object location)

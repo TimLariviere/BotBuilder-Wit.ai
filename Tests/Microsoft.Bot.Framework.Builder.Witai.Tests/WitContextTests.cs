@@ -12,18 +12,17 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
             //Arrange
             var witContext = new WitContext();
             witContext["teSt"] = "testData";
-            object val;
 
             //Action
             //Assert
-            if(witContext.TryGetValue("TEsT", out val))
+            if (witContext.TryGetValue("TEsT", out object val))
             {
                 Assert.AreEqual(val, "testData");
             }
             else
             {
                 Assert.Fail("WitContext should not be case sensitive");
-            }  
+            }
         }
     }
 }

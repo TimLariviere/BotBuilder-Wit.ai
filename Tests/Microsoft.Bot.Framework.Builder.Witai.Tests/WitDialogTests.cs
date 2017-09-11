@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Tests
@@ -36,13 +35,13 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
         [LuisIntent("ActionOne")]
         public async Task ActionOne(IDialogContext context, WitResult witResult)
         {
-            await context.PostAsync(witResult.Action);
+            await context.PostAsync("ActionOne");
         }
 
         [LuisIntent("ActionTwo")]
         public async Task ActionTwo(IDialogContext context, WitResult witResult)
         {
-            await context.PostAsync(witResult.Action);
+            await context.PostAsync("ActionTwo");
         }
 
         // Hides the original MessageReceived because we want to expose a public version of it
@@ -57,7 +56,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
     public class WitDialogTests
     {
         [TestMethod]
-        [ExpectedException(typeof(InvalidActionHandlerException))]
+        [ExpectedException(typeof(Dialogs.InvalidIntentHandlerException))]
         public void Invalid_Action_Throws_Error()
         {
             //Arrange
@@ -72,67 +71,67 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
         public void UrlEncoding_UTF8_Then_Hex()
         {
             //Arrange
-            var service = new WitService(new WitModelAttribute("token", WitApiVersion.Standard));
+            var service = new WitService(new WitModelAttribute("token", WitApiVersionType.Latest));
             
             //Act
             var request = service.BuildRequest(new WitRequest("Français", "session"));
 
             // https://github.com/Microsoft/BotBuilder/issues/247
             //Assert
-            Assert.AreNotEqual("https://api.wit.ai/converse?session_id=session&q=Fran%25u00e7ais", request.RequestUri.AbsoluteUri);
-            Assert.AreEqual("https://api.wit.ai/converse?session_id=session&q=Fran%C3%A7ais", request.RequestUri.AbsoluteUri);
+            Assert.AreNotEqual("https://api.wit.ai/message?thread_id=session&q=Fran%25u00e7ais", request.RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.wit.ai/message?thread_id=session&q=Fran%C3%A7ais", request.RequestUri.AbsoluteUri);
         }
 
-        [TestMethod]
-        public async Task Should_Execute_ActionOne_Then_Post_Message()
-        {
-            //Arrange
-            var service = new Mock<IWitService>();
-            var counter = 0;
-            service.Setup(wit => wit.QueryAsync(It.IsAny<IWitRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
-            {
-                switch (counter)
-                {
-                    case 0:
-                        counter++;
-                        return new WitResult()
-                        {
-                            Type = "action",
-                            Action = "ActionOne"
-                        };
-                    case 1:
-                        counter++;
-                        return new WitResult()
-                        {
-                            Type = "msg",
-                            Message = "test"
-                        };
-                    case 2:
-                        counter++;
-                        return new WitResult()
-                        {
-                            Type = "stop",
-                        };
-                }
+        //[TestMethod]
+        //public async Task Should_Execute_ActionOne_Then_Post_Message()
+        //{
+        //    //Arrange
+        //    var service = new Mock<IWitService>();
+        //    var counter = 0;
+        //    service.Setup(wit => wit.QueryAsync(It.IsAny<IWitRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+        //    {
+        //        switch (counter)
+        //        {
+        //            case 0:
+        //                counter++;
+        //                return new WitResult()
+        //                {
+        //                    Type = "action",
+        //                    Action = "ActionOne"
+        //                };
+        //            case 1:
+        //                counter++;
+        //                return new WitResult()
+        //                {
+        //                    Type = "msg",
+        //                    Message = "test"
+        //                };
+        //            case 2:
+        //                counter++;
+        //                return new WitResult()
+        //                {
+        //                    Type = "stop",
+        //                };
+        //        }
 
-                Assert.Fail("The dialog did not stop after the stop response from wit");
-                return default(WitResult);
-            });
-            var dialog = new TestWitDialog(service.Object);
-            var message = MakeTestMessage();
-            message.Text = "execute action one, then respond with message \"test\", then stop";
-            var item = new AwaitableFromItem<IMessageActivity>(message);
-            var context = new Mock<IDialogContext>(MockBehavior.Loose);
-            context.Setup(c => c.MakeMessage()).Returns(() => new Activity());
+        //        Assert.Fail("The dialog did not stop after the stop response from wit");
+        //        return default(WitResult);
+        //    });
+        //    var dialog = new TestWitDialog(service.Object);
+        //    var message = MakeTestMessage();
+        //    message.Text = "execute action one, then respond with message \"test\", then stop";
+        //    var item = new AwaitableFromItem<IMessageActivity>(message);
+        //    var context = new Mock<IDialogContext>(MockBehavior.Loose);
+        //    context.Setup(c => c.MakeMessage()).Returns(() => new Activity());
             
-            //Act
-            await dialog.MessageReceived(context.Object, item);
+        //    //Act
+        //    await dialog.MessageReceived(context.Object, item);
 
-            //Assert
-            context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "ActionOne"), It.IsAny<CancellationToken>()), Times.Once);
-            context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "test"), It.IsAny<CancellationToken>()), Times.Once);
-            context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "ActionTwo"), It.IsAny<CancellationToken>()), Times.Never);
-        }
+        //    //Assert
+        //    context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "ActionOne"), It.IsAny<CancellationToken>()), Times.Once);
+        //    context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "test"), It.IsAny<CancellationToken>()), Times.Once);
+        //    context.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Text == "ActionTwo"), It.IsAny<CancellationToken>()), Times.Never);
+        //}
 
         public static IMessageActivity MakeTestMessage()
         {

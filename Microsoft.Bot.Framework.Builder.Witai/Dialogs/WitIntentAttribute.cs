@@ -1,6 +1,6 @@
-﻿using Microsoft.Bot.Builder.Internals.Fibers;
+﻿using System;
+using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Bot.Builder.Scorables.Internals;
-using System;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 {
@@ -8,19 +8,14 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
     [Serializable]
     public class WitIntentAttribute : AttributeString
     {
-        public readonly string IntentName;
+        private readonly string _intentName;
 
         public WitIntentAttribute(string intentName)
         {
-            SetField.NotNull(out this.IntentName, nameof(intentName), intentName);
+            SetField.NotNull(out _intentName, nameof(intentName), intentName);
         }
 
-        protected override string Text
-        {
-            get
-            {
-                return this.IntentName;
-            }
-        }
+        protected override string Text => _intentName;
+        public string IntentName => _intentName;
     }
 }

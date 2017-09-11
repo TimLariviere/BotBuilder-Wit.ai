@@ -1,7 +1,7 @@
-﻿using Microsoft.Bot.Framework.Builder.Witai.Models;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Bot.Framework.Builder.Witai.Models;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
