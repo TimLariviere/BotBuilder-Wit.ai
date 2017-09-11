@@ -8,19 +8,22 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
         private const string TypeValue = "value";
         private const string TypeInterval = "interval";
         private const string GrainDay = "day";
+        private const string GrainWeek = "week";
         private const string GrainMonth = "month";
         private const string GrainYear = "year";
 
-        public static bool TryParse(WitEntity entity, out DateTimeRange range)
+        public static bool TryParse(WitEntity entity, out DateTimeRange range, DateTimeParserSettings settings = null)
         {
+            settings = settings ?? DateTimeParserSettings.Default;
+
             if (IsDate(entity))
             {
                 switch (entity.Type)
                 {
                     case TypeValue:
-                        return TryParseAsValue(entity, out range);
+                        return TryParseAsValue(entity, settings, out range);
                     case TypeInterval:
-                        return TryParseAsInterval(entity, out range);
+                        return TryParseAsInterval(entity, settings, out range);
                 }
             }
 
@@ -34,7 +37,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
                    || entity.Type == TypeInterval;
         }
 
-        private static bool TryParseAsValue(WitEntity entity, out DateTimeRange range)
+        private static bool TryParseAsValue(WitEntity entity, DateTimeParserSettings settings, out DateTimeRange range)
         {
             var dateStr = entity.Value.Remove(entity.Value.IndexOf("T"));
 
@@ -44,6 +47,9 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
                 {
                     case GrainDay:
                         range = new DateTimeRange(date);
+                        return true;
+                    case GrainWeek:
+                        range = new DateTimeRange(date, date.AddDays(settings.WeekDuration));
                         return true;
                     case GrainMonth:
                         range = new DateTimeRange(date, date.AddMonths(1));
@@ -58,10 +64,10 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
             return false;
         }
 
-        private static bool TryParseAsInterval(WitEntity entity, out DateTimeRange range)
+        private static bool TryParseAsInterval(WitEntity entity, DateTimeParserSettings settings, out DateTimeRange range)
         {
-            if (TryParse(entity.From, out DateTimeRange fromRange)
-                && TryParse(entity.To, out DateTimeRange toRange))
+            if (TryParseAsValue(entity.From, settings, out DateTimeRange fromRange)
+                && TryParseAsValue(entity.To, settings, out DateTimeRange toRange))
             {
                 range = new DateTimeRange(fromRange.StartDate, toRange.EndDate);
                 return true;
@@ -70,5 +76,12 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
             range = null;
             return false;
         }
+    }
+
+    public class DateTimeParserSettings
+    {
+        public static DateTimeParserSettings Default = new DateTimeParserSettings { WeekDuration = 5 };
+
+        public int WeekDuration { get; set; } = 5;
     }
 }
