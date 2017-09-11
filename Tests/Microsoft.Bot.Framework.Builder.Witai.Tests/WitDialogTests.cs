@@ -18,7 +18,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
         {
         }
 
-        [WitAction("HasAttributeButDoesNotMatchReturnType")]
+        [WitIntent("HasAttributeButDoesNotMatchReturnType")]
         public void HasAttributeButDoesNotMatchReturnType(IDialogContext context, WitResult luisResult)
         {
             throw new NotImplementedException();

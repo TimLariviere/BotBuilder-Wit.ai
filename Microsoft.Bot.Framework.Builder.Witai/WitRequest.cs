@@ -15,19 +15,18 @@ namespace Microsoft.Bot.Framework.Builder.Witai
     {
         public string Query { get; }
 
-        public string SessionId => sessionId;
+        public string ThreadId => threadId;
 
-        private string sessionId;
+        private string threadId;
 
         public string Context => context;
 
         private string context;
 
-        public WitRequest(string query,
-            string sessionId, string context = "{}")
+        public WitRequest(string query, string threadId, string context = "{}")
         {
             this.Query = query;
-            SetField.NotNull(out this.sessionId, nameof(sessionId), sessionId);
+            SetField.NotNull(out this.threadId, nameof(threadId), threadId);
             SetField.NotNull(out this.context, nameof(context), context);
         }
 
@@ -59,31 +58,23 @@ namespace Microsoft.Bot.Framework.Builder.Witai
         
         private Uri BuildUri(IWitModel model)
         {
-            if (SessionId == null)
+            if (ThreadId == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "session id");
+                throw new ValidationException(ValidationRules.CannotBeNull, "thread id");
             }
 
             var queryParameters = new List<string>();
-            queryParameters.Add($"session_id={Uri.EscapeDataString(SessionId)}");
+            queryParameters.Add($"thread_id={Uri.EscapeDataString(ThreadId)}");
 
             if (!string.IsNullOrEmpty(Query))
             {
                 queryParameters.Add($"q={Uri.EscapeDataString(Query)}");
             }
 
-            UriBuilder builder;
-
-            switch (model.ApiVersion)
+            var builder = new UriBuilder(model.UriBase)
             {
-                case WitApiVersion.Standard:
-                    builder = new UriBuilder(model.UriBase);
-                    break;
-                default:
-                    throw new ArgumentException($"{model.ApiVersion} is not a valid Wit api version.");
-            }
-
-            builder.Query = string.Join("&", queryParameters);
+                Query = string.Join("&", queryParameters)
+            };
             return builder.Uri;
         }
     }

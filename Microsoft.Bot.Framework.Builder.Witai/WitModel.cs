@@ -1,6 +1,5 @@
 ﻿using Microsoft.Bot.Builder.Internals.Fibers;
 using System;
-using System.Collections.Generic;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
@@ -23,21 +22,36 @@ namespace Microsoft.Bot.Framework.Builder.Witai
 
         public WitApiVersion ApiVersion => apiVersion;
 
-        public static readonly IReadOnlyDictionary<WitApiVersion, Uri> WitEndpoints = new Dictionary<WitApiVersion, Uri>()
-        {
-            {WitApiVersion.Standard, new Uri("https://api.wit.ai/converse?v=20160526")}
-        };
-
         /// <summary>
         /// Construct the Wit model information.
         /// </summary>
         /// <param name="authToken">The Wit model authorization token.</param>
         /// <param name="apiVersion">The wit API version.</param>
-        public WitModelAttribute(string authToken, WitApiVersion apiVersion = WitApiVersion.Standard)
+        public WitModelAttribute(string authToken, WitApiVersion apiVersion = null)
         {
+            apiVersion = apiVersion ?? WitApiVersion.Latest;
+
             SetField.NotNull(out this.authToken, nameof(authToken), authToken);
             this.apiVersion = apiVersion;
-            SetField.NotNull(out this.uriBase, nameof(uriBase), WitEndpoints[this.apiVersion]);
+            SetField.NotNull(out this.uriBase, nameof(uriBase), this.BuildUri());
+        }
+
+        private Uri BuildUri()
+        {
+            string url = null;
+            switch (this.apiVersion.Type)
+            {
+                case WitApiVersionType.Latest:
+                    url = "https://api.wit.ai/message";
+                    break;
+                case WitApiVersionType.Custom:
+                    url = "https://api.wit.ai/message?v=" + this.apiVersion.CustomValue;
+                    break;
+                default:
+                    throw new ArgumentException($"This is not a valid Wit api version.");
+            }
+
+            return new Uri(url);
         }
     }
 }

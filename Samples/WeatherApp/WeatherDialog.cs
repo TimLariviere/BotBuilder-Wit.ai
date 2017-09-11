@@ -13,7 +13,7 @@ namespace WitWeather
     [WitModel("Access Token")]
     public class WeatherDialog : WitDialog<object>
     {
-        [WitAction("getMyForecast")]
+        [WitIntent("getMyForecast")]
         public async Task GetForecast(IDialogContext context, WitResult result)
         {
             //adding location to context

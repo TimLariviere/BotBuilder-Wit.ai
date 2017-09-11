@@ -12,6 +12,5 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
         public WitErrorException(string message) : base(message)
         {
         }
-
     }
 }

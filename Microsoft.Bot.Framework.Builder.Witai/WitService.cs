@@ -59,9 +59,9 @@ namespace Microsoft.Bot.Framework.Builder.Witai
 
     public static partial class Extensions
     {
-        public static async Task<WitResult> QueryAsync(this IWitService service, string text, string sessionId, string context, CancellationToken token)
+        public static async Task<WitResult> QueryAsync(this IWitService service, string text, string threadId, string context, CancellationToken token)
         {
-            return await service.QueryAsync(new WitRequest(text, sessionId, context), token);
+            return await service.QueryAsync(new WitRequest(text, threadId, context), token);
         }
     }
 }

@@ -6,20 +6,20 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     [Serializable]
-    public class WitActionAttribute : AttributeString
+    public class WitIntentAttribute : AttributeString
     {
-        public readonly string ActionName;
+        public readonly string IntentName;
 
-        public WitActionAttribute(string actionName)
+        public WitIntentAttribute(string intentName)
         {
-            SetField.NotNull(out this.ActionName, nameof(actionName), actionName);
+            SetField.NotNull(out this.IntentName, nameof(intentName), intentName);
         }
 
         protected override string Text
         {
             get
             {
-                return this.ActionName;
+                return this.IntentName;
             }
         }
     }

@@ -9,8 +9,6 @@ namespace Microsoft.Bot.Framework.Builder.Witai
     {
         string Query { get; }
 
-        string SessionId { get; }
-
         string Context { get; }
 
         /// <summary>

@@ -87,7 +87,7 @@ namespace Microsoft.Bot.Framework.Builder
         /// <returns>the json string representation of this object</returns>
         public string ToJsonString()
         {
-            return new JavaScriptSerializer().Serialize(this.dictionary); ;
+            return new JavaScriptSerializer().Serialize(this.dictionary);
         }
 
         /// <summary>

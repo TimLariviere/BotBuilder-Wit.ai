@@ -2,14 +2,6 @@
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
-    /// <summary>
-    /// Wit Api Version
-    /// </summary>
-    public enum WitApiVersion
-    {
-        Standard
-    }
-
     public interface IWitModel
     {
         /// <summary>
