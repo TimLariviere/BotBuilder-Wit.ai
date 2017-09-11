@@ -5,22 +5,70 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 {
     public static class DateTimeParser
     {
-        public static DateTimeRange Parse(WitEntity entity)
+        private const string TypeValue = "value";
+        private const string TypeInterval = "interval";
+        private const string GrainDay = "day";
+        private const string GrainMonth = "month";
+        private const string GrainYear = "year";
+
+        public static bool TryParse(WitEntity entity, out DateTimeRange range)
         {
-            if (entity.Grain == "day")
+            if (IsDate(entity))
             {
-                var dateStr = entity.Value.Remove(entity.Value.IndexOf("T"));
-                if (DateTime.TryParse(dateStr, out DateTime date))
+                switch (entity.Type)
                 {
-                    return new DateTimeRange(date.Date);
+                    case TypeValue:
+                        return TryParseAsValue(entity, out range);
+                    case TypeInterval:
+                        return TryParseAsInterval(entity, out range);
                 }
             }
-            else if (entity.Type == "interval")
+
+            range = null;
+            return false;
+        }
+
+        private static bool IsDate(WitEntity entity)
+        {
+            return entity.Type == TypeValue && (entity.Grain == GrainDay || entity.Grain == GrainMonth || entity.Grain == GrainYear)
+                   || entity.Type == TypeInterval;
+        }
+
+        private static bool TryParseAsValue(WitEntity entity, out DateTimeRange range)
+        {
+            var dateStr = entity.Value.Remove(entity.Value.IndexOf("T"));
+
+            if (DateTime.TryParse(dateStr, out DateTime date))
             {
-                return new DateTimeRange(Parse(entity.From).StartDate, Parse(entity.To).EndDate.AddDays(-1));
+                switch (entity.Grain)
+                {
+                    case GrainDay:
+                        range = new DateTimeRange(date);
+                        return true;
+                    case GrainMonth:
+                        range = new DateTimeRange(date, date.AddMonths(1));
+                        return true;
+                    case GrainYear:
+                        range = new DateTimeRange(date, date.AddYears(1));
+                        return true;
+                }
             }
 
-            return null;
+            range = null;
+            return false;
+        }
+
+        private static bool TryParseAsInterval(WitEntity entity, out DateTimeRange range)
+        {
+            if (TryParse(entity.From, out DateTimeRange fromRange)
+                && TryParse(entity.To, out DateTimeRange toRange))
+            {
+                range = new DateTimeRange(fromRange.StartDate, toRange.EndDate);
+                return true;
+            }
+
+            range = null;
+            return false;
         }
     }
 }
