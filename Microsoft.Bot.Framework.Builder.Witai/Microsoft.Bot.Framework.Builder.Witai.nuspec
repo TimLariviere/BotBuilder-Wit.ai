@@ -1,23 +1,25 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Microsoft.Bot.Builder.Witai</id>
+    <id>WoodenMoose.Bot.Builder.Witai</id>
     <version>1.0.0</version>
-    <title>Microsoft.Bot.Builder.Witai</title>
-    <authors>Ahmed Osman</authors>
-    <owners>Ahmed Osman</owners>
-    <licenseUrl>https://github.com/q3blend/BotBuilder-Wit.ai/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/q3blend/BotBuilder-Wit.ai</projectUrl>
+    <title>WoodenMoose.Bot.Builder.Witai</title>
+    <authors>Timothé Larivière</authors>
+    <owners>Timothé Larivière</owners>
+    <licenseUrl>https://github.com/TimLariviere/BotBuilder-Wit.ai/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/TimLariviere/BotBuilder-Wit.ai</projectUrl>
     <iconUrl>https://docs.botframework.com/images/bot_icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
-      Microsoft Bot Builder integration with Wit.ai helps in creating powerful bots that utelize the power of Wit.ai for language understanding and decision making for the next action the bot should take, which giving the developer the control to extend these actions.
+      Microsoft Bot Builder integration with Wit.ai helps in creating powerful bots that utilize the power of Wit.ai for language understanding and decision making for the next action the bot should take, which giving the developer the control to extend these actions.
 
       High Level Features:
       * Built-in Wit.ai Dialog.
       * Ability to implement the actions from Wit.ai easily.
+
+      Works with GET /message endpoint only
     </description>
-    <summary>Microsoft.Bot.Builder.Witai is a library for easily integrating the bot engine from Wit.ai with Microsoft Bot Framework.</summary>
+    <summary>WoodenMoose.Bot.Builder.Witai is a library for easily integrating the bot engine from Wit.ai with Microsoft Bot Framework.</summary>
     <copyright>Copyright 2017</copyright>
     <tags>BotBuilder BotFramework Conversation Wit.ai</tags>
   </metadata>

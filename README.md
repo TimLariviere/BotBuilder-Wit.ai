@@ -3,6 +3,10 @@
 ## Overview
 This is an integration between Wit.ai and Microsoft Bot Framework. Wit.ai allows users to create full fledged dialogs that can contain placeholders for actions, with expected inputs and outputs. This integration will facilitate the implementation of the actions, and automatically passes the message responses, leveraging the Wit.ai context variables, from Wit.ai bot engine directly to the user.
 
+This is a fork of q3blend's [BotBuilder-Wit.ai repository](https://github.com/q3blend/BotBuilder-Wit.ai).
+If you want support for the POST /converse endpoint, use q3blend's lib.
+If you want support for the GET /message endpoint, use this lib.
+
 ## Getting Started
 
 * Go to Wit.ai to an existing application, or create a new one.
