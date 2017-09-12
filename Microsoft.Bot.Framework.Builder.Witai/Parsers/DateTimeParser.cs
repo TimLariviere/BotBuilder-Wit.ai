@@ -33,7 +33,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 
         private static bool IsDate(WitEntity entity)
         {
-            return entity.Type == TypeValue && (entity.Grain == GrainDay || entity.Grain == GrainMonth || entity.Grain == GrainYear)
+            return entity.Type == TypeValue && (entity.Grain == GrainDay || entity.Grain == GrainWeek || entity.Grain == GrainMonth || entity.Grain == GrainYear)
                    || entity.Type == TypeInterval;
         }
 
