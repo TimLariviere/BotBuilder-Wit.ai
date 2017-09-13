@@ -7,6 +7,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
     {
         private const string TypeValue = "value";
         private const string TypeInterval = "interval";
+        private const string GrainHour = "hour";
         private const string GrainDay = "day";
         private const string GrainWeek = "week";
         private const string GrainMonth = "month";
@@ -33,7 +34,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 
         private static bool IsDate(WitEntity entity)
         {
-            return entity.Type == TypeValue && (entity.Grain == GrainDay || entity.Grain == GrainWeek || entity.Grain == GrainMonth || entity.Grain == GrainYear)
+            return entity.Type == TypeValue && (entity.Grain == GrainHour || entity.Grain == GrainDay || entity.Grain == GrainWeek || entity.Grain == GrainMonth || entity.Grain == GrainYear)
                    || entity.Type == TypeInterval;
         }
 
@@ -45,6 +46,9 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
             {
                 switch (entity.Grain)
                 {
+                    case GrainHour:
+                        range = new DateTimeRange(date, date.AddHours(1));
+                        return true;
                     case GrainDay:
                         range = new DateTimeRange(date);
                         return true;

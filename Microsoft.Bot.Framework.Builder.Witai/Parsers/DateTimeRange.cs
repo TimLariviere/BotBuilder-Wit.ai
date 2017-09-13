@@ -2,6 +2,7 @@
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 {
+    [Serializable]
     public class DateTimeRange
     {
         public DateTimeRange(DateTime date)
