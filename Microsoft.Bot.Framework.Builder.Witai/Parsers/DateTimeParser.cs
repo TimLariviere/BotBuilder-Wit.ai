@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Bot.Framework.Builder.Witai.Models;
+﻿using Microsoft.Bot.Framework.Builder.Witai.Models;
+using System;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 {
@@ -40,9 +40,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 
         private static bool TryParseAsValue(WitEntity entity, DateTimeParserSettings settings, out DateTimeRange range)
         {
-            var dateStr = entity.Value.Remove(entity.Value.IndexOf("T"));
-
-            if (DateTime.TryParse(dateStr, out DateTime date))
+            if (DateTimeOffset.TryParse(entity.Value, out DateTimeOffset date))
             {
                 switch (entity.Grain)
                 {
