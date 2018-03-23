@@ -6,11 +6,12 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Bot.Connector;
 
 namespace WitWeather
 {
     [Serializable]
-    [WitModel("Access Token")]
+    [WitModel()]
     public class WeatherDialog : WitDialog<object>
     {
         [WitIntent("getMyForecast")]
@@ -24,6 +25,9 @@ namespace WitWeather
 
             //adding temp to context
             Context["forecast"] = temp;
+            var message = context.MakeMessage();
+            message.Text = temp.ToString();
+            await context.PostAsync(message);
         }
 
         private async Task<int> GetWeather(object location)

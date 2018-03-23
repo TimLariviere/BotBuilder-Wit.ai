@@ -11,10 +11,15 @@ If you want support for the GET /message endpoint, use this lib.
 
 * Go to Wit.ai to an existing application, or create a new one.
 * Go to Settings tab, and copy the Server Access Token.
-* Extend WitDialog class and decorate it like below:
-```csharp
-[WitModel("Access Token")]
+* Open Web.Config file and edit Wit.ApiKey (default)
+```xml
+    <add key="Wit.ApiKey" value="Access Token" />
 ```
+* If you have multi-langue wit.ai bot, you can add several key in your web.config. Each key must have this pattern Wit.ApiKey_langue, for exemple:
+```xml
+    <add key="Wit.ApiKey_fr" value="Access Token" />
+```
+
 * To define intent handlers for the actions defined in your Wit.ai application, decorate the handler methods like below:
 ```csharp
 [WitIntent("Intent Name")]
