@@ -19,6 +19,17 @@ If you want support for the GET /message endpoint, use this lib.
 ```xml
     <add key="Wit.ApiKey_fr" value="Access Token" />
 ```
+* Define wit.ai configuration to indicate what key use with a language
+```csharp
+WitLocator.Instance.Register<IWitConfig>(new WitConfig
+{
+	WitConfigDictionary = new Dictionary<CultureInfo, string>
+	{
+		{ new CultureInfo("fr"), ConfigurationManager.AppSettings[$"Wit.ApiKey_fr"] },
+		{ new CultureInfo("en"), ConfigurationManager.AppSettings[$"Wit.ApiKey_en"] }
+	}
+});
+```
 
 * To define intent handlers for the actions defined in your Wit.ai application, decorate the handler methods like below:
 ```csharp

@@ -1,6 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Web.Http;
+using Microsoft.Bot.Framework.Builder.Witai;
 
 namespace WitWeather
 {
@@ -29,6 +33,15 @@ namespace WitWeather
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            WitLocator.Instance.Register<IWitConfig>(new WitConfig
+            {
+                WitConfigDictionary = new Dictionary<CultureInfo, string>
+                {
+                    { new CultureInfo("fr"), ConfigurationManager.AppSettings[$"Wit.ApiKey_fr"] },
+                    { new CultureInfo("en"), ConfigurationManager.AppSettings[$"Wit.ApiKey_en"] }
+                }
+            });
         }
     }
 }
