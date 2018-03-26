@@ -1,5 +1,7 @@
 ﻿using Microsoft.Bot.Builder.Internals.Fibers;
 using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
@@ -17,12 +19,14 @@ namespace Microsoft.Bot.Framework.Builder.Witai
         /// <summary>
         /// Construct the Wit model information.
         /// </summary>
-        /// <param name="authToken">The Wit model authorization token.</param>
         /// <param name="apiVersionType">The wit API version (Latest or Custom).</param>
         /// <param name="apiVersion">The wit API version.</param>
-        public WitModelAttribute(string authToken, WitApiVersionType apiVersionType = WitApiVersionType.Latest, string apiVersion = null)
+        public WitModelAttribute( WitApiVersionType apiVersionType = WitApiVersionType.Latest, string apiVersion = null)
         {
+            var config = WitLocator.Instance.Resolve<IWitConfig>();
+
             _apiVersion = apiVersionType == WitApiVersionType.Latest ? WitApiVersion.Latest : WitApiVersion.Custom(apiVersion);
+            var authToken = config?.WitConfigDictionary.FirstOrDefault(c => c.Key.Equals(CultureInfo.CurrentCulture)).Value;
 
             SetField.NotNull(out _authToken, nameof(authToken), authToken);
             SetField.NotNull(out _uriBase, nameof(_uriBase), BuildUri());
@@ -30,11 +34,11 @@ namespace Microsoft.Bot.Framework.Builder.Witai
 
         public string AuthToken => _authToken;
         public Uri UriBase => _uriBase;
-        public WitApiVersion ApiVersion { get; }
+        public WitApiVersion ApiVersion => _apiVersion;
 
         private Uri BuildUri()
         {
-            string url = null;
+            string url;
             switch (_apiVersion.Type)
             {
                 case WitApiVersionType.Latest:
