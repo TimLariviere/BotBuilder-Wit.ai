@@ -71,10 +71,11 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
         public void UrlEncoding_UTF8_Then_Hex()
         {
             //Arrange
-            var service = new WitService(new WitModelAttribute("token", WitApiVersionType.Latest));
+            var model = new WitModelAttribute("token", WitApiVersionType.Latest).MakeWitModel();
+            var service = new WitService(model);
             
             //Act
-            var request = service.BuildRequest(new WitRequest("Français", "session"));
+            var request = service.BuildRequest(new WitRequest("Français", "session"), model);
 
             // https://github.com/Microsoft/BotBuilder/issues/247
             //Assert

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Bot.Builder.Dialogs;
+﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Framework.Builder.Exceptions;
 using Microsoft.Bot.Framework.Builder.Witai.Extensions;
 using Microsoft.Bot.Framework.Builder.Witai.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 {
@@ -120,7 +120,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
             var message = await item;
             var messageText = await GetWitQueryTextAsync(context, message);
             var jsonContext = Context.ToJsonString();
-            var result = await _service.QueryAsync(messageText, _witThreadId, jsonContext, context.CancellationToken);
+            var result = await _service.QueryAsync(context, messageText, _witThreadId, jsonContext, context.CancellationToken);
 
             await DispatchToIntentHandler(context, item, result);
         }
@@ -134,7 +134,10 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                 throw new WitModelDisambiguationException("WitDialog does not support more than one WitModel per instance");
             }
 
-            return new WitService(witModels.ToArray()[0]);
+            var attribute = witModels.ToArray()[0];
+            var witModel = attribute.MakeWitModel();
+
+            return new WitService(witModel);
         }
 
         #endregion
