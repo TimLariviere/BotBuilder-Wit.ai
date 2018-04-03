@@ -1,14 +1,15 @@
-﻿using System.Net.Http;
+﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Framework.Builder.Witai.Models;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Bot.Framework.Builder.Witai.Models;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
     public interface IWitService
     {
-        Task<WitResult> QueryAsync(IWitRequest request, CancellationToken token);
+        Task<WitResult> QueryAsync(IDialogContext context, IWitRequest request, CancellationToken token);
 
-        HttpRequestMessage BuildRequest(IWitRequest witRequest);
+        HttpRequestMessage BuildRequest(IWitRequest witRequest, IWitModel model);
     }
 }

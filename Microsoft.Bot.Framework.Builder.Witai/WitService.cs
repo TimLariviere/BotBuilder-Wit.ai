@@ -1,10 +1,11 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Bot.Framework.Builder.Witai.Models;
 using Newtonsoft.Json;
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.Bot.Framework.Builder.Witai
 {
@@ -12,6 +13,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai
     public sealed class WitService : IWitService
     {
         private readonly IWitModel _model;
+        private readonly IWitModelProvider _modelProvider;
 
         /// <summary>
         /// Construct the wit service using the model information.
@@ -22,15 +24,26 @@ namespace Microsoft.Bot.Framework.Builder.Witai
             SetField.NotNull(out _model, nameof(model), model);
         }
 
-        public Task<WitResult> QueryAsync(IWitRequest request, CancellationToken token)
+        public WitService(IWitModelProvider modelProvider)
         {
-            var httpRequest = BuildRequest(request);
-            return QueryAsync(httpRequest, token);
+            SetField.NotNull(out _modelProvider, nameof(modelProvider), modelProvider);
         }
 
-        public HttpRequestMessage BuildRequest(IWitRequest witRequest)
+        public async Task<WitResult> QueryAsync(IDialogContext context, IWitRequest request, CancellationToken token)
         {
-            return witRequest.BuildRequest(_model);
+            IWitModel model = _model;
+            if (_modelProvider != null)
+            {
+                model = await _modelProvider.GetWitModelAsync(context);
+            }
+
+            var httpRequest = BuildRequest(request, model);
+            return await QueryAsync(httpRequest, token);
+        }
+
+        public HttpRequestMessage BuildRequest(IWitRequest witRequest, IWitModel model)
+        {
+            return witRequest.BuildRequest(model);
         }
 
         private async Task<WitResult> QueryAsync(HttpRequestMessage request, CancellationToken token)

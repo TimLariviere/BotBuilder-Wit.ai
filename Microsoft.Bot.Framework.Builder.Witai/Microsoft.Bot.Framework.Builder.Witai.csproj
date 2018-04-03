@@ -79,6 +79,8 @@
   <ItemGroup>
     <Compile Include="Extensions\WitResultExtensions.cs" />
     <Compile Include="Extensions\WitServiceExtensions.cs" />
+    <Compile Include="IWitModelProvider.cs" />
+    <Compile Include="IWitTokenProvider.cs" />
     <Compile Include="Parsers\DateTimeParser.cs" />
     <Compile Include="Parsers\DateTimeRange.cs" />
     <Compile Include="WitApiVersion.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="IWitModel.cs" />
     <Compile Include="IWitRequest.cs" />
     <Compile Include="IWitService.cs" />
+    <Compile Include="WitModelAttribute.cs" />
     <Compile Include="WitRequest.cs" />
     <Compile Include="WitContext.cs" />
     <Compile Include="WitModel.cs" />
