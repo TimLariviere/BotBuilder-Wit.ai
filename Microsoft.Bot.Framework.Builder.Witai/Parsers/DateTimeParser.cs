@@ -40,7 +40,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 
         private static bool TryParseAsValue(WitEntity entity, DateTimeParserSettings settings, out DateTimeRange range)
         {
-            if (DateTimeOffset.TryParse(entity.Value, out DateTimeOffset date))
+            if (entity != null && DateTimeOffset.TryParse(entity.Value, out DateTimeOffset date))
             {
                 switch (entity.Grain)
                 {
@@ -68,10 +68,21 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
 
         private static bool TryParseAsInterval(WitEntity entity, DateTimeParserSettings settings, out DateTimeRange range)
         {
-            if (TryParseAsValue(entity.From, settings, out DateTimeRange fromRange)
-                && TryParseAsValue(entity.To, settings, out DateTimeRange toRange))
+            TryParseAsValue(entity.From, settings, out DateTimeRange fromRange);
+            TryParseAsValue(entity.To, settings, out DateTimeRange toRange);
+            if (fromRange != null && toRange != null)
             {
                 range = new DateTimeRange(fromRange.StartDate, toRange.EndDate);
+                return true;
+            }
+            else if (fromRange != null)
+            {
+                range = new DateTimeRange(fromRange.StartDate, DateTime.MaxValue);
+                return true;
+            }
+            else if (toRange != null)
+            {
+                range = new DateTimeRange(DateTime.Now, toRange.EndDate);
                 return true;
             }
 
