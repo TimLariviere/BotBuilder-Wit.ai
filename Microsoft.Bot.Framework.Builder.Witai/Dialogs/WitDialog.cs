@@ -81,7 +81,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                 _handlerByIntent = new Dictionary<string, IntentActivityHandler>(GetHandlersByIntent());
             }
 
-            var intent = result.Entities.FirstOrDefault(e => e.Key == "intent").Value?
+            var intent = result.Entities?.FirstOrDefault(e => e.Key == "intent").Value?
                                .OrderByDescending(i => i.Confidence)
                                .Select(i => i.Value)
                                .FirstOrDefault();

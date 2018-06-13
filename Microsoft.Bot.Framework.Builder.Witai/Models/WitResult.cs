@@ -12,5 +12,9 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Models
         public string Text { get; set; }
 
         public Dictionary<string, IList<WitEntity>> Entities { get; set; }
+
+        public string Error { get; set; }
+
+        public string Code { get; set; }
     }
 }
