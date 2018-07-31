@@ -2,9 +2,9 @@
 <package >
   <metadata>
     <id>WoodenMoose.Bot.Builder.Witai</id>
-    <version>1.4.1</version>
+    <version>1.5.2</version>
     <title>WoodenMoose.Bot.Builder.Witai</title>
-    <authors>Timothé Larivière</authors>
+    <authors>Timothé Larivière;Arthur Le Meur;Xavier Gendre</authors>
     <owners>Timothé Larivière</owners>
     <licenseUrl>https://github.com/TimLariviere/BotBuilder-Wit.ai/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/TimLariviere/BotBuilder-Wit.ai</projectUrl>

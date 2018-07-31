@@ -13,7 +13,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
     public sealed class InvalidWitDialog : WitDialog<object>
     {
         public InvalidWitDialog(IWitService service)
-            : base(service)
+            : base(service, new WitConfiguration { MinConfidenceThreshold = 0f })
         {
         }
 
@@ -27,7 +27,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Tests
     [Serializable]
     public sealed class TestWitDialog : WitDialog<object>
     {
-        public TestWitDialog(IWitService service) : base(service)
+        public TestWitDialog(IWitService service) : base(service, new WitConfiguration { MinConfidenceThreshold = 0f })
         {
 
         }

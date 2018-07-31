@@ -95,6 +95,7 @@
     <Compile Include="IWitModel.cs" />
     <Compile Include="IWitRequest.cs" />
     <Compile Include="IWitService.cs" />
+    <Compile Include="WitConfiguration.cs" />
     <Compile Include="WitModelAttribute.cs" />
     <Compile Include="WitRequest.cs" />
     <Compile Include="WitContext.cs" />

@@ -24,6 +24,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
         [NonSerialized]
         private Dictionary<string, IntentActivityHandler> _handlerByIntent;
         private readonly IWitService _service;
+        private readonly WitConfiguration _configuration;
         private string _witThreadId;
 
         #endregion
@@ -36,9 +37,10 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
             StartNewThread();
         }
 
-        public WitDialog(IWitService service)
+        public WitDialog(IWitService service, WitConfiguration configuration)
         {
             SetField.NotNull(out _service, nameof(service), service);
+            SetField.NotNull(out _configuration, nameof(configuration), configuration);
             StartNewThread();
         }
 
@@ -83,6 +85,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 
             var intent = result.Entities?.FirstOrDefault(e => e.Key == "intent").Value?
                                .OrderByDescending(i => i.Confidence)
+                               .Where(i => i.Confidence >= _configuration.MinConfidenceThreshold)
                                .Select(i => i.Value)
                                .FirstOrDefault();
 

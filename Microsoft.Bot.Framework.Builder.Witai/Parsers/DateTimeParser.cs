@@ -51,13 +51,13 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Parsers
                         range = new DateTimeRange(date);
                         return true;
                     case GrainWeek:
-                        range = new DateTimeRange(date, date.AddDays(settings.WeekDuration));
+                        range = new DateTimeRange(date, date.AddDays(settings.WeekDuration).AddSeconds(-1));
                         return true;
                     case GrainMonth:
-                        range = new DateTimeRange(date, date.AddMonths(1));
+                        range = new DateTimeRange(date, date.AddMonths(1).AddSeconds(-1));
                         return true;
                     case GrainYear:
-                        range = new DateTimeRange(date, date.AddYears(1));
+                        range = new DateTimeRange(date, date.AddYears(1).AddSeconds(-1));
                         return true;
                 }
             }
