@@ -151,7 +151,7 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
         public static IEnumerable<KeyValuePair<string, IntentActivityHandler>> EnumerateHandlers(object dialog)
         {
             var type = dialog.GetType();
-            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             foreach (var method in methods)
             {
                 var actions = method.GetCustomAttributes<WitIntentAttribute>(inherit: true).ToArray();
