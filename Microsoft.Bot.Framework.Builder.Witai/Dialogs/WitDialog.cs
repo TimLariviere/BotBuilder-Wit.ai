@@ -159,7 +159,14 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
 
                 try
                 {
-                    intentHandler = (IntentActivityHandler)Delegate.CreateDelegate(typeof(IntentActivityHandler), dialog, method, throwOnBindFailure: false);
+                    if (method.IsStatic)
+                    {
+                        intentHandler = (IntentActivityHandler)Delegate.CreateDelegate(typeof(IntentActivityHandler), method, throwOnBindFailure: false);
+                    }
+                    else
+                    {
+                        intentHandler = (IntentActivityHandler)Delegate.CreateDelegate(typeof(IntentActivityHandler), dialog, method, throwOnBindFailure: false);
+                    }                    
                 }
                 catch (ArgumentException)
                 {
@@ -173,7 +180,16 @@ namespace Microsoft.Bot.Framework.Builder.Witai.Dialogs
                 {
                     try
                     {
-                        var handler = (IntentHandler)Delegate.CreateDelegate(typeof(IntentHandler), dialog, method, throwOnBindFailure: false);
+                        IntentHandler handler = null;
+
+                        if (method.IsStatic)
+                        {
+                            handler = (IntentHandler)Delegate.CreateDelegate(typeof(IntentHandler), method, throwOnBindFailure: false);
+                        }
+                        else
+                        {
+                            handler = (IntentHandler)Delegate.CreateDelegate(typeof(IntentHandler), dialog, method, throwOnBindFailure: false);
+                        }
 
                         if (handler != null)
                         {
